@@ -253,7 +253,10 @@ class SosRepository(private val context: Context) {
         }
 
         // 1. IF THIS MESSAGE WAS SENT FROM THIS EXACT PHYSICAL DEVICE ID, DO NOT PLAY ALARM OR NOTIFICATION!
-        if (sosMessage.deviceId.isNotBlank() && sosMessage.deviceId == myDeviceId) {
+        val isOurOwnMessage = sosMessage.senderName.equals(myName, ignoreCase = true) 
+                && (sosMessage.deviceId == myDeviceId || System.currentTimeMillis() - sosMessage.timestamp < 4000L)
+
+        if (isOurOwnMessage) {
             if (currentList.none { it.id == sosMessage.id }) {
                 currentList.add(0, sosMessage.copy(isIncoming = false))
                 _messages.value = currentList
@@ -263,7 +266,8 @@ class SosRepository(private val context: Context) {
 
         // 2. INCOMING MESSAGE FROM ANOTHER DEVICE
         if (currentList.none { it.id == sosMessage.id }) {
-            currentList.add(0, sosMessage)
+            val incomingMsg = sosMessage.copy(isIncoming = true)
+            currentList.add(0, incomingMsg)
             _messages.value = currentList
 
             // Send Delivery ACK back to sender so sender sees ✓✓ Delivered!
@@ -284,27 +288,16 @@ class SosRepository(private val context: Context) {
                 return
             }
 
-            val target = sosMessage.targetRecipient.trim()
-            val isForMe = target.equals("BARCHAGA", ignoreCase = true)
-                    || target.equals("ALL", ignoreCase = true)
-                    || target.isEmpty()
-                    || target.equals(myName, ignoreCase = true)
-                    || myName.contains(target, ignoreCase = true)
-                    || target.contains(myName, ignoreCase = true)
-                    || (sosMessage.deviceId.isNotBlank() && sosMessage.deviceId != myDeviceId)
+            _activeIncomingAlert.value = incomingMsg
 
-            if (isForMe) {
-                _activeIncomingAlert.value = sosMessage
-
-                if (!sosMessage.audioData.isNullOrBlank()) {
-                    // IF GALASAVOY (Voice Note): Automatically play sender's voice out loud at 100% max volume!
-                    notificationManager.showHeadsUpSosNotification(sosMessage)
-                    voiceNoteManager.playVoiceNote(sosMessage.audioData)
-                } else {
-                    // IF TEXT SOS: Play emergency siren alarm sound & vibration
-                    alertManager.playAlertSoundAndVibrate(_soundType.value)
-                    notificationManager.showHeadsUpSosNotification(sosMessage)
-                }
+            if (!incomingMsg.audioData.isNullOrBlank()) {
+                // IF GALASAVOY (Voice Note): Automatically play sender's voice out loud at 100% max volume!
+                notificationManager.showHeadsUpSosNotification(incomingMsg)
+                voiceNoteManager.playVoiceNote(incomingMsg.audioData)
+            } else {
+                // IF TEXT SOS: Play emergency siren alarm sound & vibration
+                alertManager.playAlertSoundAndVibrate(_soundType.value)
+                notificationManager.showHeadsUpSosNotification(incomingMsg)
             }
         }
     }
