@@ -1,6 +1,12 @@
 package com.example.xabarsos.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -76,6 +82,17 @@ fun QuickSosButtons(
 ) {
     var customMessage by remember { mutableStateOf("") }
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
+
+    val infiniteTransition = rememberInfiniteTransition(label = "neonPulse")
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.35f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
 
     androidx.compose.runtime.LaunchedEffect(isRecordingVoiceNote, selectedRecipient) {
         if (isRecordingVoiceNote && selectedRecipient.isNotBlank()) {
@@ -194,6 +211,7 @@ fun QuickSosButtons(
                                 }
 
                                 val cardBgColor = when {
+                                    isThisFriendTyping -> neonColor.copy(alpha = pulseAlpha * 0.4f)
                                     isSelected -> Color(0xFF00B0FF)
                                     else -> Color(0xFF1E2230)
                                 }
@@ -211,7 +229,7 @@ fun QuickSosButtons(
                                     colors = CardDefaults.cardColors(
                                         containerColor = cardBgColor
                                     ),
-                                    border = if (isThisFriendTyping) BorderStroke(2.dp, neonColor) else null,
+                                    border = if (isThisFriendTyping) BorderStroke(2.5.dp, neonColor.copy(alpha = pulseAlpha)) else null,
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Column(

@@ -123,6 +123,9 @@ class WebSocketSosManager(
                     // ONLY process actual SOS emergency messages
                     if (messageObj.has("messageText")) {
                         val msgText = messageObj.get("messageText")?.asString ?: ""
+                        if (msgText.startsWith("TYPING_STATUS_")) {
+                            return
+                        }
                         val audioDataStr = if (messageObj.has("audioData") && !messageObj.get("audioData").isJsonNull) {
                             messageObj.get("audioData").asString
                         } else null
