@@ -64,14 +64,16 @@ fun SosAlertBanner(
                     imageVector = Icons.Default.NotificationsActive,
                     contentDescription = "SOS Alert",
                     tint = Color.White,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(28.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "🚨 SHOSHILINCH SOS XABARI!",
                     color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    softWrap = false
                 )
             }
 
@@ -81,7 +83,7 @@ fun SosAlertBanner(
                 // 3D TALKING EMOJI AVATAR (Lip sync with speech)
                 Talking3dEmojiAvatar(
                     isPlaying = isPlayingVoiceNote,
-                    size = 110.dp
+                    size = 100.dp
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -90,10 +92,11 @@ fun SosAlertBanner(
             Text(
                 text = sosMessage.messageText,
                 color = Color(0xFFFFD54F), // Bright neon yellow text for high contrast
-                fontSize = 24.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Black,
                 textAlign = TextAlign.Center,
-                lineHeight = 30.sp
+                maxLines = 1,
+                softWrap = false
             )
 
             if (!sosMessage.audioData.isNullOrBlank()) {
@@ -111,13 +114,15 @@ fun SosAlertBanner(
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = "Eshitish",
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "▶️ GALASAVOYNI QAYTA ESHITISH",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }
@@ -127,15 +132,17 @@ fun SosAlertBanner(
             Text(
                 text = "Yuboruvchi: ${sosMessage.senderName} | Kimga: ${sosMessage.targetRecipient}",
                 color = Color.White,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                softWrap = false
             )
 
             val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
             Text(
                 text = "Vaqt: ${timeFormat.format(Date(sosMessage.timestamp))}",
                 color = Color.White.copy(alpha = 0.8f),
-                fontSize = 12.sp
+                fontSize = 11.sp
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -152,13 +159,15 @@ fun SosAlertBanner(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.VolumeOff,
                     contentDescription = "O'chirish",
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "O'CHIRISH (OGOHLANTIRISHNI TO'XTATISH)",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "O'CHIRISH (TO'XTATISH)",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    softWrap = false
                 )
             }
         }
