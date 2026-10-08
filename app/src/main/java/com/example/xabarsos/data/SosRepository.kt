@@ -135,6 +135,7 @@ class SosRepository(private val context: Context) {
                                     || target.equals(myName, ignoreCase = true)
                                     || myName.contains(target, ignoreCase = true)
                                     || target.contains(myName, ignoreCase = true)
+                                    || (senderDevId.isNotBlank() && senderDevId != getDeviceId())
 
                             if (senderDevId != getDeviceId() && isForMe) {
                                 lastTypingEventTimestamp = eventTs
@@ -290,6 +291,7 @@ class SosRepository(private val context: Context) {
                     || target.equals(myName, ignoreCase = true)
                     || myName.contains(target, ignoreCase = true)
                     || target.contains(myName, ignoreCase = true)
+                    || (sosMessage.deviceId.isNotBlank() && sosMessage.deviceId != myDeviceId)
 
             if (isForMe) {
                 _activeIncomingAlert.value = sosMessage
